@@ -61,8 +61,14 @@ glm::vec3 Scene::traceRay(const Ray& ray, unsigned int recursionTime)
     // 光照强度的第一部分：局部光照强度
     if (!enterEntity)
     {
-        lightIntensity = collidedEntityPtr->getMaterial().kShade *
-            shade(*collidedEntityPtr, collidedPoint, ray);
+        glm::vec3 shaderColor = shade(*collidedEntityPtr, collidedPoint, ray);
+        lightIntensity = collidedEntityPtr->getMaterial().kShade_ * shaderColor;
+        if(lightIntensity.x > 0)
+        {
+            // std::cout << "lightIntensity" << lightIntensity << std::endl;
+        }
+
+        //std::cout <<"shaderColor" << shaderColor << "collidedEntityPtr->getMaterial().kShade_" << collidedEntityPtr->getMaterial().kShade_ << std::endl;
     }
     
 
@@ -130,16 +136,22 @@ glm::vec3 Scene::shade(const Shape& entity, glm::vec3 fragPos, const Ray& ray)
     glm::vec3 result(0.0f);
     for (auto pLight : _lights)
     {
-        if(entity.getName() == "Plane")
-        {
-            std::cout << result << "normal: "<< entity.calNormal(fragPos)  << std::endl;
-            std::cout <<  "fragPos: "<< fragPos << " ray.getDirection() : " << ray.getDirection() << std::endl;
-            result += pLight->calLight(entity.getMaterial(), fragPos, entity.calNormal(fragPos), ray.getDirection());
+        // if(entity.getName() == "Plane")
+        // {
+        //     // std::cout <<  "fragPos: "<< fragPos << " ray.getDirection() : " << ray.getDirection() << std::endl;
+        //     result += pLight->calLight(entity.getMaterial(), fragPos, entity.calNormal(fragPos), ray.getDirection());
+        //     // std::cout << result << "normal: "<< entity.calNormal(fragPos)  << std::endl;
 
-        }
+        // }
+        result += pLight->calLight(entity.getMaterial(), fragPos, entity.calNormal(fragPos), ray.getDirection());
         // std::cout << result << "normal: "<< entity.calNormal(fragPos)  << std::endl;
         // std::cout <<  "fragPos: "<< fragPos << " ray.getDirection() : " << ray.getDirection() << std::endl;
     }
+    // if(result.x > 0)
+    // {
+    //     std::cout << result  << std::endl;
+
+    // }
     return result;
 }
 

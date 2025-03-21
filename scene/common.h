@@ -21,15 +21,13 @@ enum class SceneType
 
 struct Material
 {
-	glm::vec3 ambient_;
 	glm::vec3 diffuse_;
 	glm::vec3 specular_;
-	glm::vec3 shininess_;
+	float shininess_;
 	float kShade_;
 	float kReflect_;
 	float kRefract_;
 	float refractiveIndex_;
-	glm::vec3 kColor_;
 };
 
 #endif

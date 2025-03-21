@@ -13,6 +13,8 @@ void processInput(GLFWwindow *window);
 // settings
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
+// const unsigned int SCR_WIDTH = 200;
+// const unsigned int SCR_HEIGHT = 150;
 const unsigned int SAMPLES = 1;
 int CHANNELS = 4;
  
@@ -151,7 +153,7 @@ int main()
         shader.use();
         processInput(window);
 
-        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        glClearColor(1.0f, 1.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
         // bind Texture
         glBindTexture(GL_TEXTURE_2D, texture);
