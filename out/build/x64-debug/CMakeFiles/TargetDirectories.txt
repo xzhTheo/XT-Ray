@@ -1,3 +1,0 @@
-D:/project/XT-Ray/out/build/x64-debug/CMakeFiles/XT-Ray.dir
-D:/project/XT-Ray/out/build/x64-debug/CMakeFiles/edit_cache.dir
-D:/project/XT-Ray/out/build/x64-debug/CMakeFiles/rebuild_cache.dir
