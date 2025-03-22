@@ -5,7 +5,7 @@ const unsigned int Scene::MAX_RECURSION_TIME = 5;
 
 Scene::Scene()
 {
-
+    count = 0;
 }
 Scene::~Scene()
 {
@@ -41,27 +41,23 @@ glm::vec3 Scene::traceRay(const Ray& ray, unsigned int recursionTime)
     const Shape* collidedEntityPtr = hitResult.shape;
 
    // 递归结束条件：光线没有照射到物体上
-    if (collidedEntityPtr == nullptr)
+    if (hitResult.shape == nullptr)
     {
         // background color
         return glm::vec3{1, 1, 1};
     }
 
-    // 获得照射点及其法向量
-    glm::vec3 collidedPoint =  hitResult.hitPoint;
-    // std::cout << "collidedPoint: " << collidedPoint << std::endl;
     bool enterEntity = collidedEntityPtr->rayInEntity(ray);
-    // glm::vec3 normal = glm::normalize(collidedEntityPtr->calNormal(collidedPoint));
-    // if (enterEntity)
-    // {
-    //     // 若光线是从物体内部射出的，法向量应该取反
-    //     normal = -normal;
-    // }
+     if (enterEntity)
+     {
+         // 若光线是从物体内部射出的，法向量应该取反
+         //hitResult.normal = -hitResult.normal;
+     }
 
     // 光照强度的第一部分：局部光照强度
     if (!enterEntity)
     {
-        glm::vec3 shaderColor = shade(*collidedEntityPtr, collidedPoint, ray);
+        glm::vec3 shaderColor = shade(hitResult, ray);
         lightIntensity = collidedEntityPtr->getMaterial().kShade_ * shaderColor;
         if(lightIntensity.x > 0)
         {
@@ -73,34 +69,34 @@ glm::vec3 Scene::traceRay(const Ray& ray, unsigned int recursionTime)
     
 
     // // 计算反射方向
-    // glm::vec3 reflectDirection = glm::reflect(ray.getDirection(), normal);
+     glm::vec3 reflectDirection = glm::reflect(ray.getDirection(), hitResult.normal);
     
-    // // 光照强度的第二部分：反射光照强度
-    // if (collidedEntityPtr->getMaterial().kReflect > FLOAT_EPS) // > 0
-    // {
-    //     std::cout <<collidedEntityPtr->getName() <<  reflectDirection << "collidedPoint" << collidedPoint << std::endl;
-    //     lightIntensity += collidedEntityPtr->getMaterial().kReflect *
-    //         traceRay(Ray(collidedPoint, collidedPoint + reflectDirection), recursionTime + 1);
-    // }
+     // 光照强度的第二部分：反射光照强度
+     if (collidedEntityPtr->getMaterial().kReflect_ > FLOAT_EPS) // > 0
+     {
+         //std::cout <<collidedEntityPtr->getName() <<  reflectDirection << "collidedPoint" << hitResult.hitPoint << std::endl;
+         lightIntensity += collidedEntityPtr->getMaterial().kReflect_ *
+             traceRay(Ray(hitResult.hitPoint, hitResult.hitPoint + reflectDirection), recursionTime + 1);
+     }
 
     // // 计算折射率
-    // float currentIndex = 1.0f;
-    // float nextIndex = collidedEntityPtr->getMaterial().refractiveIndex;
-    // if (enterEntity)
-    // {
-    //     // 若光线是从物体内部射出的，折射率需要进行交换
-    //     std::swap(currentIndex, nextIndex);
-    // }
+     float currentIndex = 1.0f;
+     float nextIndex = collidedEntityPtr->getMaterial().refractiveIndex_;
+     if (enterEntity)
+     {
+         // 若光线是从物体内部射出的，折射率需要进行交换
+         std::swap(currentIndex, nextIndex);
+     }
 
-    // // 计算折射方向
-    // glm::vec3 refractDirection = glm::refract(ray.getDirection(), normal,  currentIndex / nextIndex);
+     // 计算折射方向
+     glm::vec3 refractDirection = glm::refract(ray.getDirection(), hitResult.normal,  currentIndex / nextIndex);
 
-    // // 光照强度的第三部分：折射光照强度
-    // if (collidedEntityPtr->getMaterial().kRefract > FLOAT_EPS) // > 0
-    // {
-    //     lightIntensity += collidedEntityPtr->getMaterial().kRefract * 
-    //         traceRay(Ray(collidedPoint, collidedPoint + refractDirection), recursionTime + 1);
-    // }
+     // 光照强度的第三部分：折射光照强度
+     if (collidedEntityPtr->getMaterial().kRefract_ > FLOAT_EPS) // > 0
+     {
+         lightIntensity += collidedEntityPtr->getMaterial().kRefract_ * 
+             traceRay(Ray(hitResult.hitPoint, hitResult.hitPoint + refractDirection), recursionTime + 1);
+     }
 
     return lightIntensity;
 }
@@ -131,7 +127,7 @@ HitResult Scene::getIntersection(const Ray& ray)
     return result;
 }
 
-glm::vec3 Scene::shade(const Shape& entity, glm::vec3 fragPos, const Ray& ray)
+glm::vec3 Scene::shade(const HitResult& hitRes, const Ray& ray)
 {
     glm::vec3 result(0.0f);
     for (auto pLight : _lights)
@@ -143,7 +139,7 @@ glm::vec3 Scene::shade(const Shape& entity, glm::vec3 fragPos, const Ray& ray)
         //     // std::cout << result << "normal: "<< entity.calNormal(fragPos)  << std::endl;
 
         // }
-        result += pLight->calLight(entity.getMaterial(), fragPos, entity.calNormal(fragPos), ray.getDirection());
+        result += pLight->calLight(hitRes.shape->getMaterial(), hitRes.hitPoint, hitRes.normal, ray.getDirection());
         // std::cout << result << "normal: "<< entity.calNormal(fragPos)  << std::endl;
         // std::cout <<  "fragPos: "<< fragPos << " ray.getDirection() : " << ray.getDirection() << std::endl;
     }
@@ -152,6 +148,7 @@ glm::vec3 Scene::shade(const Shape& entity, glm::vec3 fragPos, const Ray& ray)
     //     std::cout << result  << std::endl;
 
     // }
+    result = glm::clamp(result, 0.0f, 1.0f);  // 关键！防止溢出
     return result;
 }
 

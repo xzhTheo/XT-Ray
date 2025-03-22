@@ -11,8 +11,8 @@ Shader::Shader(const GLchar* vertexPath, const GLchar* fragmentPath)
 	try
 	{
         std::cout << vertexPath << fragmentPath <<std::endl;
-		vShaderFile.open("/Users/theo.xu/study/Xt-RAY/shader/vertex.glsl");
-		fShaderFile.open("/Users/theo.xu/study/Xt-RAY/shader/fragment.glsl");
+		vShaderFile.open("D:\\project\\XT-Ray\\shader\\vertex.glsl");
+		fShaderFile.open("D:\\project\\XT-Ray\\shader\\fragment.glsl");
         std::cout << "dfdfgdgf" <<std::endl;
 		std::stringstream vShaderStream, fShaderStream;
 		vShaderStream << vShaderFile.rdbuf();

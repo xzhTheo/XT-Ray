@@ -14,7 +14,7 @@ public:
     }
     Scene* CreateScene(SceneType type);
     Scene* CreateBasicScene();
-    Scene* CreateBVHScene(){};
+    //Scene* CreateBVHScene(){};
 private:
     SceneCreator(){};
     virtual ~SceneCreator(){};

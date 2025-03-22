@@ -6,7 +6,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include "common.h"
 static const float FLOAT_INF = 100000000.0f;
-static const float FLOAT_EPS = 1e-5;
+static const float FLOAT_EPS = 1e-6;
 static const glm::vec3 NULL_POINT(FLOAT_INF, FLOAT_INF, FLOAT_INF);
 class Ray
 {

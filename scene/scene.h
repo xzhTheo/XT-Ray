@@ -28,12 +28,13 @@ public:
     void addLight(Light* light);
     glm::vec3 traceRay(const Ray& ray, unsigned int recursionTime = 0);
     HitResult getIntersection(const Ray& ray);
-    glm::vec3 shade(const Shape& entity, glm::vec3 fragPos, const Ray& ray);
+    glm::vec3 shade(const HitResult& hitRes, const Ray& ray);
 
     static const unsigned int MAX_RECURSION_TIME;
 private:
     std::vector<Shape*> _entitys;
     std::vector<Light*> _lights;
+    long count;
 };
 
 #endif
