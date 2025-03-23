@@ -19,7 +19,7 @@ glm::vec3 DirLight::calLight(
 	const glm::vec3& norm,
 	const glm::vec3& viewDir) const 
 {
-	glm::vec3 ambient = _ambient;
+	//glm::vec3 ambient = _ambient;
 
 	glm::vec3 lightDir = normalize(-_direction);
 	float diff = std::max(dot(norm, lightDir), 0.0f);
@@ -31,10 +31,15 @@ glm::vec3 DirLight::calLight(
 	// std::cout << "ambient: " << ambient << "diffuse: " << diffuse << "specular: " << specular << "(ambient + diffuse + specular)" <<(ambient + diffuse + specular) << std::endl;
 
 	//return (norm * static_cast<float>(0.5) + glm::vec3(0.5f, 0.5f, 0.5f));
-	glm::vec3 result = (ambient + diffuse + specular);
+	glm::vec3 result = (diffuse + specular);
 	//std::cout << "result" << result  << std::endl;
 	result = glm::clamp(result, 0.0f, 1.0f);  // ¹Ø¼ü£¡·ÀÖ¹Òç³ö
 	return  result;
+}
+
+glm::vec3 DirLight::getDirection(const glm::vec3& fragPos) const
+{
+	return normalize(-_direction);
 }
 
 
@@ -53,7 +58,7 @@ glm::vec3 PointLight::calLight(
 	const glm::vec3& norm,
 	const glm::vec3& viewDir) const
 {
-	glm::vec3 ambient = lightStrength_ * glm::vec3(1.0f);
+	//glm::vec3 ambient = lightStrength_ * glm::vec3(1.0f);
 
 	glm::vec3 lightDir = normalize(pos_ - fragPos);
 	//std::cout << "lightDir"  << lightDir << std::endl;
@@ -66,5 +71,10 @@ glm::vec3 PointLight::calLight(
 	glm::vec3 specular = spec * material.specular_ ;
 	//std::cout << "ambient: " << ambient << "diffuse: " << diffuse << "specular: " << specular << "(ambient + diffuse + specular)" <<(ambient + diffuse + specular) <<"count"<< count++ << std::endl;
 
-	return (ambient+ diffuse + specular) ;
+	return ( diffuse + specular) ;
+}
+
+glm::vec3 PointLight::getDirection(const glm::vec3& fragPos) const
+{
+	return normalize(pos_ - fragPos);
 }

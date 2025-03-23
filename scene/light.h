@@ -15,6 +15,7 @@ public:
 		const glm::vec3& fragPos,
 		const glm::vec3& norm,
 		const glm::vec3& viewDir) const = 0;
+	virtual glm::vec3 getDirection(const glm::vec3& fragPos) const = 0;
 private:
 };
 
@@ -33,6 +34,7 @@ public:
 		const glm::vec3& fragPos,
 		const glm::vec3& norm,
 		const glm::vec3& viewDir) const;
+	glm::vec3 getDirection(const glm::vec3& fragPos) const;
 private:
 	glm::vec3 _ambient;
 	glm::vec3 _diffuse;
@@ -52,6 +54,7 @@ public:
 		const glm::vec3& fragPos,
 		const glm::vec3& norm,
 		const glm::vec3& viewDir) const;
+	glm::vec3 getDirection(const glm::vec3& fragPos) const;
 private:
 	glm::vec3 pos_;
 	glm::vec3 lightStrength_;
